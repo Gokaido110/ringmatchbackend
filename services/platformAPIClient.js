@@ -4,7 +4,7 @@ const platformAPIClient = axios.create({
   baseURL: "https://api.minepi.com",
   timeout: 20000,
   headers: {
-    Authorization: `Key xnsayii7dngtsmrxhjhmsup0noyfthbpa2gjtsr5aswnnl7qrpdbdt2nxtgiv4fm`,
+    Authorization: `Key ndk3imryb59utcdgoclzcc5j2zefnbl0xj2n4hihd0b0xr7ylwjqtqupmvspgf9d`,
   },
 });
 

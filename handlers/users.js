@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const platformAPIClient = require("../services/platformAPIClient");
 const User = require("../models/userModel");
+const jwt = require("jsonwebtoken")
 
 // handle the user auth accordingly
 router.post("/signin", async (req, res) => {
@@ -43,15 +44,15 @@ router.post("/signin", async (req, res) => {
       currentUser = savedUser;
     }
 
-    // Set currentUser in the session
-    req.session.currentUser = currentUser;
-    req.session.save();
+    const token = jwt.sign({userId:currentUser.uid},"SoleilApp",{expiresIn:"20m"})
 
+    // Set currentUser in the session
+ 
     console.log("-----------current user from login--------");
     console.log(currentUser);
     console.log("-----------current user from login--------");
 
-    return res.status(200).json({ message: "User signed in", currentUser });
+    return res.status(200).json({currentUser,token});
   } catch (error) {
     console.error("Error handling user sign-in:", error);
     return res.status(500).json({ error: "Internal Server Error" });

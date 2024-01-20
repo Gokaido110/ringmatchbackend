@@ -2,6 +2,9 @@ const axios = require("axios");
 const express = require("express");
 const platformAPIClient = require("../services/platformAPIClient");
 const Order = require("../models/orderModel");
+const isAuthenticated = require("../authMiddleware/isAuthenticated")
+const util = require("util")
+const fs= require("fs")
 
 const router = express.Router();
 
@@ -51,16 +54,16 @@ router.post("/incomplete", async (req, res) => {
 });
 
 // approve the current payment
-router.post("/approve", async (req, res) => {
+router.post("/approve",isAuthenticated ,async (req, res) => {
   console.log("user hitted approve route");
 
   console.log("-----------current user from approve--------");
-  console.log(req.session.currentUser);
-  console.log("session for userId: " + req.session.userId);
+  console.log(req.currentUser);
+  console.log("jwt id  for userId: " + req.currentUser.uid);
   console.log(req.session);
   console.log("-----------current user from approve--------");
 
-  if (!req.session.currentUser) {
+  if (!req.currentUser) {
     return res
       .status(401)
       .json({ error: "unauthorized", message: "User needs to sign in first" });
@@ -79,15 +82,23 @@ router.post("/approve", async (req, res) => {
   await Order.create({
     pi_payment_id: paymentId,
     product_id: currentPayment.data.metadata.productId,
-    user: req.session.currentUser.uid,
+    user: req.currentUser.uid,
     txid: null,
     paid: false,
     cancelled: false,
     created_at: new Date(),
   });
 
+  console.log("-----------this is current payment--------");
+  console.log(currentPayment);
+  // fs.writeFileSync("currentPayment.log",currentPayment)
+  console.log("-----------this is current payment--------");
+
   // let Pi Servers know that you're ready
-  await platformAPIClient.post(`/v2/payments/${paymentId}/approve`);
+  const response = await platformAPIClient.post(`/v2/payments/${paymentId}/approve`);
+  console.log("response from approve : " + util.inspect(response, { depth: 5 }));
+  const soleil=util.inspect(response, { depth: 5 })
+  fs.writeFileSync("response1.log",soleil)
   return res.status(200).json({ message: `Approved the payment ${paymentId}` });
 });
 
