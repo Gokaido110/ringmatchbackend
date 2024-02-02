@@ -1,41 +1,30 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 
+// middle ware to check if received token is valid or expired
 const isAuthenticated = async (req, res, next) => {
-    // Get the token from the request headers
-    const tokenWithQuotes = req.headers.authorization && req.headers.authorization.split(' ')[1];
 
-    if (!tokenWithQuotes) {
+    //extracting token from headers
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    console.log("token: " + token);
+
+    if (!token) {
         console.log("soleil says u are not authenticated");
         return res.status(401).json({ error: 'Unauthorized - Token not provided' });
     }
 
-    // Remove the surrounding quotes
-    const tokenWithoutQuotes = tokenWithQuotes.slice(1, -1);
-
-    console.log("------------------------")
-    console.log("here is token without quote : "+tokenWithoutQuotes)
-    console.log("------------------------")
-
-    console.log("------------------------")
-    console.log("here is token with quote : "+tokenWithQuotes)
-    console.log("------------------------")
-
     try {
-        // Verify the token using the secret key
-        const decodedToken = jwt.verify(tokenWithoutQuotes, 'SoleilApp');
-
-        // Find the user based on the decoded token's userId
+        // verifying the token using json web token
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const currentUser = await User.findOne({ uid: decodedToken.userId });
 
         if (!currentUser) {
             return res.status(401).json({ error: 'Unauthorized - User not found' });
         }
 
-        // Attach the decoded token payload to the request object
+        //seeting re.currentUser once token is verified and valid
         req.currentUser = currentUser;
-
-        // Continue to the next middleware or route handler
+        
         next();
     } catch (error) {
         console.error('Error verifying token:', error);

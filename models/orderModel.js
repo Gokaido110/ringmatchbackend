@@ -8,6 +8,7 @@ const orderSchema = new mongoose.Schema({
   paid: Boolean,
   cancelled: Boolean,
   created_at: Date,
+  amount:Number,
 });
 
 module.exports = mongoose.model("Order", orderSchema);

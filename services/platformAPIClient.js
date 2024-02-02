@@ -1,10 +1,10 @@
 const axios = require("axios");
 
 const platformAPIClient = axios.create({
-  baseURL: "https://api.minepi.com",
+  baseURL: process.env.PLATFORM_API_URL,
   timeout: 20000,
   headers: {
-    Authorization: `Key ndk3imryb59utcdgoclzcc5j2zefnbl0xj2n4hihd0b0xr7ylwjqtqupmvspgf9d`,
+    Authorization: `Key ${process.env.PI_API_KEY}`,
   },
 });
 

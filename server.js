@@ -6,11 +6,15 @@ const session = require("express-session");
 const logger = require("morgan");
 const cors = require("cors");
 const MongoStore = require("connect-mongo");
-const cookieParser = require("cookie-parser"); // Import cookie-parser
+const cookieParser = require("cookie-parser"); 
+const dotenv = require("dotenv");
+
+dotenv.config()
 
 // routes
 const userRoutes = require("./handlers/users");
 const paymentRoutes = require("./handlers/payments");
+const transactionRoutes = require("./handlers/transactions");
 
 const app = express();
 
@@ -22,7 +26,7 @@ app.use((req, res, next) => {
 });
 
 const corsOptions = {
-  origin: "http://localhost:3314",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 };
 
@@ -37,35 +41,29 @@ app.use(
   })
 );
 
-app.use(
-  session({
-    secret: "SoleilApp",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 60000 * 10 },
-    store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/SoleilAppDB",
-      ttl: 60000 * 10,
-      autoRemove: "native",
-    }),
-  })
-);
+// app.use(
+//   session({
+//     secret: "SoleilApp",
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: { maxAge: 60000 * 10 },
+//     store: MongoStore.create({
+//       mongoUrl: "mongodb://localhost:27017/SoleilAppDB",
+//       ttl: 60000 * 10,
+//       autoRemove: "native",
+//     }),
+//   })
+// );
 
 app.use("/user", userRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/transactions", transactionRoutes);
 
-mongoose.connect(`mongodb://localhost:27017/SoleilAppDB`).then(() => {
-  app.listen(9000, () => {
+mongoose.connect(`${process.env.MONGODB_URL}/SoleilAppDB`).then(() => {
+  app.listen(process.env.PORT, () => {
     console.log(
-      `App is running on port 9000 and successfully connected to the database`
+      `Succesfuly connected to db ${process.env.MONGODB_URL} and app running on port ${process.env.PORT}`
     );
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-app.get("/test", (req, res) => {
-  res.send("test");
-});
