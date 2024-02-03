@@ -59,11 +59,13 @@ app.use("/user", userRoutes);
 app.use("/payments", paymentRoutes);
 app.use("/transactions", transactionRoutes);
 
-mongoose.connect(`${process.env.MONGODB_URL}/SoleilAppDB`).then(() => {
+mongoose.connect(`${process.env.MONGODB_URL}`).then(() => {
   app.listen(process.env.PORT, () => {
     console.log(
       `Succesfuly connected to db ${process.env.MONGODB_URL} and app running on port ${process.env.PORT}`
     );
   });
+}).catch(err => {
+  console.log("error while connectiong to db")
 });
 
