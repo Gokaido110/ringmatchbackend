@@ -41,19 +41,6 @@ app.use(
   })
 );
 
-// app.use(
-//   session({
-//     secret: "SoleilApp",
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { maxAge: 60000 * 10 },
-//     store: MongoStore.create({
-//       mongoUrl: "mongodb://localhost:27017/SoleilAppDB",
-//       ttl: 60000 * 10,
-//       autoRemove: "native",
-//     }),
-//   })
-// );
 
 app.use("/user", userRoutes);
 app.use("/payments", paymentRoutes);
