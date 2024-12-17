@@ -26,9 +26,19 @@ app.use((req, res, next) => {
 });
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: function (origin, callback) {
+    const allowedOrigins = ["http://localhost:3000", "https://pisetupistesting.netlify.app"];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 };
+
+app.use(cors(corsOptions));
+
 
 app.use(cors(corsOptions));
 app.use(cookieParser()); // Use cookie-parser middleware
