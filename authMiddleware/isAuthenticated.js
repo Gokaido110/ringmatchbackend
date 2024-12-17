@@ -9,7 +9,7 @@ const isAuthenticated = async (req, res, next) => {
     console.log("token: " + token);
 
     if (!token) {
-        console.log("soleil says u are not authenticated");
+        console.log("Not Authenticated");
         return res.status(401).json({ error: 'Unauthorized - Token not provided' });
     }
 
